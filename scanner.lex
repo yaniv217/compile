@@ -15,8 +15,8 @@ NUM_	((0)|([1-9])+)
 NUM_B_ ((NUM_)(b))
 hexdigit ([0-9A-Fa-f])
 hex ("\\x")(hexdigit)(hexdigit)
-LegalEsacapes ("\\\"|"\\""|"\\n"|"\\r"|"\\t"|"\\0")
-ILeagaleEscapes ("\\"|\n|\r)
+LegalEscapes    \\["nrt0\\]
+IllegalEscapes   \\[^"nrt0\\]
 printablecharacters ([\x20-\x7E])
 commentBreakers (\n|\r|\r\n)
 
