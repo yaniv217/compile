@@ -1,6 +1,5 @@
 %{
 #include "tokens.hpp"
-void error(char type)
 %}
 
 %option yylineno
@@ -11,9 +10,9 @@ letter  ([a-zA-Z])
 whitespace  ([\n\r\t])
 relationalOP	("=="|"!="|"<="|"<"|">="|">")
 binaryOP	("+"|"-"|"*"|"/")
-ID 	((letter)+(number|letter)*)
-NUM	((0)|([1-9])+)
-NUM_B ((NUM)(b))
+ID_ 	((letter)+(number|letter)*)
+NUM_	((0)|([1-9])+)
+NUM_B_ ((NUM_)(b))
 hexdigit ([0-9A-Fa-f])
 hex ("\\x")(hexdigit)(hexdigit)
 LegalEsacapes ("\\\"|"\\""|"\\n"|"\\r"|"\\t"|"\\0")
@@ -48,18 +47,17 @@ continue	{return CONTINUE;}
 "["	{return LBRACK;}
 "]"	{return RBRACK;}
 "="	{return ASSIGN;}
-relationalOP	{return RELOP;}
+(relationalOP)	{return RELOP;}
+(binaryOP)	{return BINOP;}
 ["]   {BEGIN(STRING);}
-<STRING>ILeagaleEscapes 	{return error("e");}
+<STRING>ILeagaleEscapes 	{return UNDIFIENDESCAPEERROR;}
 <STRING>printablecharacters{0,1024}	{;}
 <STRING>["]   {return STRING;}
-<STRING>. {return errorUnclosedString();}
+<STRING>. {return UNCLOSEDSTRINGERROR;}
 "//"  BEGIN(COMMENT);
-<COMMENT>commentBreakers	{return errorUnknownChar();}
+<COMMENT>commentBreakers	{return UNKOWNCHARERROR;}
 <COMMENT>whitespace   {BEGIN(INITIAL);}
+(ID_) {return ID;}
+(NUM_) {return NUM;}
+(NUM_B_) {return NUM_B;}
 %%
-
-error(char type){
-	if type =="e":
-		errorUndefinedEscape(name);
-}

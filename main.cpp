@@ -6,7 +6,21 @@ int main() {
 
     // read tokens until the end of file is reached
     while ((token = static_cast<tokentype>(yylex()))) {
-        // your code here
+        switch (token) {
+            case UNKOWNCHARERROR:
+                output::errorUnknownChar(*yytext);
+                break;
+            case UNCLOSEDSTRINGERROR:
+                output::errorUnclosedString();
+                break;
+            case UNDIFIENDESCAPEERROR:
+                output::errorUndefinedEscape(yytext);
+                break;
+            default:
+                output::printToken(yylineno, token, yytext);
+                break;
+        }
+
     }
     return 0;
 }
