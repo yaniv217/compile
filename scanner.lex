@@ -8,7 +8,7 @@
 
 digit   ([0-9])
 letter  ([a-zA-Z])
-whitespace  ([\n\r\t])
+whitespace  ([ \n\r\t])
 relationalOP	("=="|"!="|"<="|"<"|">="|">")
 binaryOP	("+"|"-"|"*"|"/")
 ID_ 	({letter})+({digit}|{letter})*
@@ -23,6 +23,7 @@ commentBreakers (\n|\r|\r\n)
 
 
 %%
+{whitespace} { /* ignore */ }
 void    return VOID;
 int    {return INT;}
 byte    {return BYTE;}
