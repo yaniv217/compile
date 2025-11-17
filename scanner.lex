@@ -20,11 +20,9 @@ IllegalEscapes   \\[^"nrt0\\]
 printablecharacters ([\x20-\x7E])
 commentBreakers (\n|\r|\r\n)
 
-%x STRING
-%x COMMENT
 
 %%
-void    {return VOID;}
+void    return VOID;
 int    {return INT;}
 byte    {return BYTE;}
 bool    {return BOOL;}
@@ -38,25 +36,21 @@ else	{return ELSE;}
 while	{return WHILE;}
 break	{return BREAK;}
 continue	{return CONTINUE;}
-";"   {return SC;}
-","   {return COMMA;}
-"("	{return LPAREN;}
-")"	{return RPAREN;}
-"{"	{return LBRACE;}
-"}"	{return RBRACE;}
-"["	{return LBRACK;}
-"]"	{return RBRACK;}
-"="	{return ASSIGN;}
+\;   {return SC;}
+\,   {return COMMA;}
+\(	{return LPAREN;}
+\)	{return RPAREN;}
+\{	{return LBRACE;}
+\}	{return RBRACE;}
+\[	{return LBRACK;}
+\]	{return RBRACK;}
+\=	{return ASSIGN;}
 ("=="|"!="|"<="|"<"|">="|">")	{return RELOP;}
 ("+"|"-"|"*"|"/")	{return BINOP;}
-["]   {BEGIN(STRING);}
-<STRING>IllegalEscapes 	{return UNDIFIENDESCAPEERROR;}
-<STRING>{printablecharacters}	{;}
-<STRING>["]   {return STRING;}
-<STRING>. {return UNCLOSEDSTRINGERROR;}
-"//"  {BEGIN(COMMENT);}
-<COMMENT>commentBreakers	{return UNKOWNCHARERROR;}
-<COMMENT>whitespace   {BEGIN(INITIAL);}
+\/\/[^\n\r]*	{return COMMENT;}
+\"(([ !#-\[\]-~	])|\\([\\ntr\"0])|\\(x[0-7][0-9a-fA-F]))*\" {return STRING;}
+\"(([ !#-\[\]-~	])|\\([\\ntr\"0])|\\(x[0-7][0-9a-fA-F]))* {return UNCLOSEDSTRINGERROR;}
+\"(([ !#-\[\]-~	])|\\([\\ntr\"0])|\\(x[0-7][0-9a-fA-F]))*\\[^\\ntr\"0] {return UNDIFIENDESCAPEERROR;}
 ({letter})+({digit}|{letter})* {return ID;}
 ((0)|([1-9])+) {return NUM;}
 (((0)|([1-9])+)(b)) {return NUM_B;}
