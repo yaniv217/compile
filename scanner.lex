@@ -10,7 +10,7 @@ letter  ([a-zA-Z])
 whitespace  ([\n\r\t])
 relationalOP	("=="|"!="|"<="|"<"|">="|">")
 binaryOP	("+"|"-"|"*"|"/")
-ID_ 	((letter)+(number|letter)*)
+ID_ 	({letter})+({digit}|{letter})*
 NUM_	((0)|([1-9])+)
 NUM_B_ ((NUM_)(b))
 hexdigit ([0-9A-Fa-f])
@@ -47,17 +47,17 @@ continue	{return CONTINUE;}
 "["	{return LBRACK;}
 "]"	{return RBRACK;}
 "="	{return ASSIGN;}
-(relationalOP)	{return RELOP;}
-(binaryOP)	{return BINOP;}
+("=="|"!="|"<="|"<"|">="|">")	{return RELOP;}
+("+"|"-"|"*"|"/")	{return BINOP;}
 ["]   {BEGIN(STRING);}
-<STRING>ILeagaleEscapes 	{return UNDIFIENDESCAPEERROR;}
-<STRING>printablecharacters{0,1024}	{;}
+<STRING>IllegalEscapes 	{return UNDIFIENDESCAPEERROR;}
+<STRING>{printablecharacters}	{;}
 <STRING>["]   {return STRING;}
 <STRING>. {return UNCLOSEDSTRINGERROR;}
-"//"  BEGIN(COMMENT);
+"//"  {BEGIN(COMMENT);}
 <COMMENT>commentBreakers	{return UNKOWNCHARERROR;}
 <COMMENT>whitespace   {BEGIN(INITIAL);}
-(ID_) {return ID;}
-(NUM_) {return NUM;}
-(NUM_B_) {return NUM_B;}
+({letter})+({digit}|{letter})* {return ID;}
+((0)|([1-9])+) {return NUM;}
+(((0)|([1-9])+)(b)) {return NUM_B;}
 %%
