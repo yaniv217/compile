@@ -18,6 +18,8 @@ namespace output {
     void errorUndefinedEscape(const char *sequence);
 
     std::string unescape(const char *text);
+
+    const char *extractAfterSlash(const char *value);
 }
 
 #endif //OUTPUT_HPP

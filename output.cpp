@@ -122,3 +122,39 @@ std::string output::unescape(const char *text) {
 
     return out;
 }
+
+
+const char *output::extractAfterSlash(const char *value) {
+    // Find the first '/'
+    const char *p = value;
+    while (*p && *p != '\\') {
+        p++;
+    }
+
+    // If no '/' found, return nullptr or "" depending on what you want
+    if (*p != '\\') {
+        return nullptr;  // or return "" if you prefer
+    }
+
+    const char *start = p;  // start at the '/'
+    p++; // move past '/'
+
+    // Move until space or end
+    while (*p && *p != ' ') {
+        p++;
+    }
+
+    // Compute length
+    size_t len = p - start;
+
+    // Copy into a static buffer (safe for returning const char*)
+    static char buffer[1024];
+    if (len >= sizeof(buffer)) { len = sizeof(buffer) - 1; }
+
+    for (size_t i = 0; i < len; i++) {
+        buffer[i] = start[i];
+    }
+    buffer[len] = '\0';
+
+    return buffer;
+}

@@ -11,14 +11,14 @@ letter  ([a-zA-Z])
 whitespace  ([ \n\r\t])
 relationalOP	("=="|"!="|"<="|"<"|">="|">")
 binaryOP	("+"|"-"|"*"|"/")
-ID_ 	({letter})+({digit}|{letter})*
-NUM_	((0)|([1-9])+)
-NUM_B_ ((NUM_)(b))
-hexdigit ([0-9A-Fa-f])
-hex ("\\x")(hexdigit)(hexdigit)
-LegalEscapes    \\["nrt0\\]
+identifier	({letter})+({digit}|{letter})*
+number	((0)|([1-9])+)
+binarynumber ({number}(b))
+hexnumber (\\(x[0-7][0-9a-fA-F]))
+LegalEscapes    \\([\\ntr\"0])
 IllegalEscapes   \\[^"nrt0\\]
-printablecharacters ([\x20-\x7E])
+printablecharacters ([ !#-\[\]-~	])
+followingIlegalEsacape ([!#-\[\]-~])
 commentBreakers (\n|\r|\r\n)
 
 
@@ -47,13 +47,13 @@ continue	{return CONTINUE;}
 \[	{return LBRACK;}
 \]	{return RBRACK;}
 \=	{return ASSIGN;}
-("=="|"!="|"<="|"<"|">="|">")	{return RELOP;}
-("+"|"-"|"*"|"/")	{return BINOP;}
+{relationalOP}	{return RELOP;}
+{binaryOP}	{return BINOP;}
 \/\/[^\n\r]*	{return COMMENT;}
-\"(([ !#-\[\]-~	])|\\([\\ntr\"0])|\\(x[0-7][0-9a-fA-F]))*\" {return STRING;}
-\"(([ !#-\[\]-~	])|\\([\\ntr\"0])|\\(x[0-7][0-9a-fA-F]))* {return UNCLOSEDSTRINGERROR;}
-\"(([ !#-\[\]-~	])|\\([\\ntr\"0])|\\(x[0-7][0-9a-fA-F]))*\\[^\\ntr\"0] {return UNDIFIENDESCAPEERROR;}
-({letter})+({digit}|{letter})* {return ID;}
-((0)|([1-9])+) {return NUM;}
-(((0)|([1-9])+)(b)) {return NUM_B;}
-%%
+\"({printablecharacters}|{LegalEscapes}|{hexnumber})*\" {return STRING;}
+\"({printablecharacters}|{LegalEscapes}|{hexnumber})* {return UNCLOSEDSTRINGERROR;}
+\"({printablecharacters}|{LegalEscapes}|{hexnumber})*\\[^\\ntr\"0]({followingIlegalEsacape})* {return UNDIFIENDESCAPEERROR;}
+{identifier} {return ID;}
+{number} {return NUM;}
+{binarynumber} {return NUM_B;}
+%%	

@@ -14,7 +14,7 @@ int main() {
                 output::errorUnclosedString();
                 break;
             case UNDIFIENDESCAPEERROR:
-                output::errorUndefinedEscape(yytext);
+                output::errorUndefinedEscape(output::extractAfterSlash(yytext));
                 break;
             case STRING:
                 output::printToken(yylineno, token, output::unescape(yytext).c_str());
