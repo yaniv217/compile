@@ -56,4 +56,5 @@ continue	{return CONTINUE;}
 {identifier} {return ID;}
 {number} {return NUM;}
 {binarynumber} {return NUM_B;}
+.	{return UNKOWNCHARERROR;}
 %%	

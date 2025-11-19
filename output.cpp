@@ -1,6 +1,7 @@
 #include "output.hpp"
 #include <iostream>
 #include <cstring>
+#include <cctype>
 
 static const std::string token_names[] = {
         "__FILLER_FOR_ZERO",
@@ -61,6 +62,27 @@ void output::errorUndefinedEscape(const char *sequence) {
     exit(0);
 }
 
+int hexCharToInt(char c) {
+    if (std::isdigit(c)) {
+        return c - '0';
+    }
+    else if (std::isxdigit(c)) {
+        return std::tolower(c) - 'a' + 10;
+    }
+    else {
+        throw std::invalid_argument("Invalid hex character");
+    }
+}
+
+// Convert a 2-character hex string to a char
+char hexToAscii(const char *hex) {
+    if (!hex) { throw std::invalid_argument("Null pointer"); }
+
+    int high = hexCharToInt(hex[0]);
+    int low = hexCharToInt(hex[1]);
+
+    return static_cast<char>((high << 4) | low);
+}
 
 std::string output::unescape(const char *text) {
     std::string out;
@@ -103,7 +125,11 @@ std::string output::unescape(const char *text) {
                 case '\"':
                     out.push_back('\"');
                     break;
-
+                case 'x':
+                    text++;
+                    out.push_back(hexToAscii(text));
+                    text++;
+                    break;
                 case '\0':
                     return out; // malformed but safe
 
@@ -136,8 +162,9 @@ const char *output::extractAfterSlash(const char *value) {
         return nullptr;  // or return "" if you prefer
     }
 
-    const char *start = p;  // start at the '/'
+    const char *start = p + 1;  // start at the '/'
     p++; // move past '/'
+
 
     // Move until space or end
     while (*p && *p != ' ') {
@@ -151,8 +178,11 @@ const char *output::extractAfterSlash(const char *value) {
     static char buffer[1024];
     if (len >= sizeof(buffer)) { len = sizeof(buffer) - 1; }
 
-    for (size_t i = 0; i < len; i++) {
+    for (size_t i = 0; i < 3; i++) {
         buffer[i] = start[i];
+        if (buffer[i] != 'x' && i == 0) {
+            break;
+        }
     }
     buffer[len] = '\0';
 
