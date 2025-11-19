@@ -16,6 +16,9 @@ int main() {
             case UNDIFIENDESCAPEERROR:
                 output::errorUndefinedEscape(yytext);
                 break;
+            case STRING:
+                output::printToken(yylineno, token, output::unescape(yytext).c_str());
+                break;
             default:
                 output::printToken(yylineno, token, yytext);
                 break;

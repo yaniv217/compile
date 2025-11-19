@@ -1,6 +1,7 @@
 #ifndef OUTPUT_HPP
 #define OUTPUT_HPP
 
+#include <string>
 #include "tokens.hpp"
 
 namespace output {
@@ -14,7 +15,9 @@ namespace output {
 
     void errorUnclosedString();
 
-    void errorUndefinedEscape(const char* sequence);
+    void errorUndefinedEscape(const char *sequence);
+
+    std::string unescape(const char *text);
 }
 
 #endif //OUTPUT_HPP
